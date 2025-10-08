@@ -1,3 +1,4 @@
+// app/(dashboard)/dashboard/layout.tsx
 import { requireAuth } from '@/lib/auth-helpers';
 import Sidebar from '@/components/dashboard/Sidebar';
 import Header from '@/components/dashboard/Header';
@@ -10,7 +11,7 @@ export default async function DashboardLayout({
   const user = await requireAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
       {/* Sidebar */}
       <Sidebar user={user} />
 
