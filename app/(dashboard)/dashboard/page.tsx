@@ -6,6 +6,9 @@ import { TaskBoard } from '@/components/dashboard/TaskBoard';
 import StatsCards from '@/components/dashboard/StatsCards';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import QuickActions from '@/components/dashboard/QuickActions';
+import ProductivityChart from '@/components/dashboard/ProductivityChart';
+import TaskPriorityBreakdown from '@/components/dashboard/TaskPriorityBreakdown';
+import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 
 export default async function DashboardPage() {
   const user = await requireAuth();
@@ -33,27 +36,46 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Quick Actions */}
+      {/* Quick Actions Banner */}
       <QuickActions />
 
-      {/* Stats Cards */}
+      {/* Stats Cards Grid */}
       <StatsCards stats={stats} plan={subscription?.plan || 'FREE'} />
 
-      {/* Main Content Grid */}
+      {/* Main Content Grid - 3 Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Task Board - Takes 2 columns on large screens */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Tasks
-            </h2>
+        {/* Left Column - Task Board (2 columns wide) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Task Board */}
+          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Your Tasks</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Drag and drop to update status
+                </p>
+              </div>
+              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                View All →
+              </button>
+            </div>
             <TaskBoard tasks={tasks} />
           </div>
+
+          {/* Productivity Chart */}
+          <ProductivityChart />
         </div>
 
-        {/* Sidebar - Takes 1 column */}
+        {/* Right Column - Sidebar Widgets (1 column wide) */}
         <div className="space-y-6">
+          {/* Recent Activity */}
           <RecentActivity tasks={tasks.slice(0, 5)} />
+          
+          {/* Upcoming Deadlines */}
+          <UpcomingDeadlines tasks={tasks} />
+          
+          {/* Priority Breakdown */}
+          <TaskPriorityBreakdown tasks={tasks} />
         </div>
       </div>
     </div>
