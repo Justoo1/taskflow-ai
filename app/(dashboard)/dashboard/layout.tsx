@@ -1,6 +1,6 @@
 import { requireAuth } from '@/lib/auth-helpers';
 import Sidebar from '@/components/dashboard/Sidebar';
-import Header from '@/components/shared/Header';
+import Header from '@/components/dashboard/Header';
 
 export default async function DashboardLayout({
   children,

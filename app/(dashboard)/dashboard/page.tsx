@@ -47,15 +47,15 @@ export default async function DashboardPage() {
         {/* Left Column - Task Board (2 columns wide) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Task Board */}
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Your Tasks</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your Tasks</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Drag and drop to update status
                 </p>
               </div>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
                 View All →
               </button>
             </div>

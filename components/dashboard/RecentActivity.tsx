@@ -70,14 +70,14 @@ const RecentActivity = ({ tasks }: RecentActivityProps) => {
   };
 
   return (
-    <Card className="border-2 hover:shadow-lg transition-shadow">
-      <CardHeader className="border-b bg-gradient-to-r from-gray-50 to-white">
+    <Card className="border-2 hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+      <CardHeader className="border-b bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            <CardTitle className="text-lg">Recent Activity</CardTitle>
+            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <CardTitle className="text-lg dark:text-white">Recent Activity</CardTitle>
           </div>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
             {tasks.length} items
           </Badge>
         </div>
@@ -89,13 +89,13 @@ const RecentActivity = ({ tasks }: RecentActivityProps) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Clock className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+              <Clock className="w-8 h-8 text-gray-400 dark:text-gray-500" />
             </div>
-            <p className="text-sm font-medium text-gray-900 mb-1">
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
               No recent activity
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Your recent tasks will appear here
             </p>
           </motion.div>
@@ -117,32 +117,32 @@ const RecentActivity = ({ tasks }: RecentActivityProps) => {
                   key={task.id}
                   variants={itemVariants}
                   whileHover={{ scale: 1.02, x: 4 }}
-                  className="group flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0 cursor-pointer"
+                  className="group flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 cursor-pointer"
                 >
                   {/* Status indicator */}
-                  <div className={`mt-1 p-2 rounded-lg ${statusInfo?.color || 'bg-gray-100'}`}>
-                    <StatusIcon className="w-4 h-4 text-gray-600" />
+                  <div className={`mt-1 p-2 rounded-lg ${statusInfo?.color || 'bg-gray-100'} dark:bg-opacity-20`}>
+                    <StatusIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {task.title}
                       </p>
-                      <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge
                         variant="outline"
-                        className={`text-xs ${priorityInfo?.color || ''} flex items-center gap-1`}
+                        className={`text-xs ${priorityInfo?.color || ''} dark:bg-opacity-20 flex items-center gap-1`}
                       >
                         <PriorityIcon className={`w-3 h-3 ${priorityInfo?.iconColor}`} />
                         {task.priority}
                       </Badge>
 
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatDistanceToNow(new Date(task.createdAt), {
                           addSuffix: true,
@@ -159,12 +159,12 @@ const RecentActivity = ({ tasks }: RecentActivityProps) => {
         {/* View all link */}
         {tasks.length > 0 && (
           <motion.div 
-            className="mt-6 pt-4 border-t"
+            className="mt-6 pt-4 border-t dark:border-gray-700"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-2 hover:gap-3 transition-all">
+            <button className="w-full text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center justify-center gap-2 hover:gap-3 transition-all">
               View all activity
               <ArrowRight className="w-4 h-4" />
             </button>

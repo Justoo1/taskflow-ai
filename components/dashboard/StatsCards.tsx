@@ -87,38 +87,38 @@ const StatsCards = ({ stats, plan }: StatsCardsProps) => {
     >
       {cards.map((card, index) => (
         <motion.div key={card.title} variants={cardVariants}>
-          <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-gray-300">
+          <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-800">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     {card.title}
                   </p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-3xl font-bold text-gray-900">
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
                       {card.value}
                     </p>
                     {card.change && (
-                      <span className="text-sm font-semibold text-green-600 flex items-center">
+                      <span className="text-sm font-semibold text-green-600 dark:text-green-400 flex items-center">
                         <Zap className="w-3 h-3 mr-1" />
                         {card.change}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className={`${card.bgColor} p-4 rounded-xl shadow-sm`}>
-                  <card.icon className={`h-7 w-7 ${card.color}`} />
+                <div className={`${card.bgColor} dark:bg-opacity-20 p-4 rounded-xl shadow-sm`}>
+                  <card.icon className={`h-7 w-7 ${card.color} dark:opacity-90`} />
                 </div>
               </div>
               
               {/* Progress bar for completed tasks */}
               {card.title === 'Completed' && stats.total > 0 && (
                 <div className="mt-4 space-y-1">
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>Completion Rate</span>
                     <span className="font-semibold">{completionRate}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                     <motion.div 
                       className={`h-full bg-gradient-to-r ${card.gradient} rounded-full`}
                       initial={{ width: 0 }}
@@ -131,7 +131,7 @@ const StatsCards = ({ stats, plan }: StatsCardsProps) => {
             </CardContent>
             
             {/* Decorative gradient overlay */}
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.gradient} opacity-5 rounded-full blur-2xl`} />
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.gradient} opacity-5 dark:opacity-10 rounded-full blur-2xl`} />
           </Card>
         </motion.div>
       ))}

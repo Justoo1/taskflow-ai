@@ -61,14 +61,14 @@ const TaskPriorityBreakdown = ({ tasks }: TaskPriorityBreakdownProps) => {
   const totalTasks = tasks.length;
 
   return (
-    <Card className="border-2 hover:shadow-lg transition-shadow">
-      <CardHeader className="border-b bg-gradient-to-r from-orange-50 to-red-50">
+    <Card className="border-2 hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+      <CardHeader className="border-b bg-gradient-to-r from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-orange-600" />
-            <CardTitle className="text-lg">Priority Breakdown</CardTitle>
+            <Target className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <CardTitle className="text-lg dark:text-white">Priority Breakdown</CardTitle>
           </div>
-          <Badge variant="outline" className="bg-white">
+          <Badge variant="outline" className="bg-white dark:bg-gray-700 dark:text-gray-300">
             {totalTasks} total
           </Badge>
         </div>
@@ -77,13 +77,13 @@ const TaskPriorityBreakdown = ({ tasks }: TaskPriorityBreakdownProps) => {
       <CardContent className="pt-6">
         {totalTasks === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Target className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+              <Target className="w-8 h-8 text-gray-400 dark:text-gray-500" />
             </div>
-            <p className="text-sm font-medium text-gray-900 mb-1">
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
               No tasks yet
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Create tasks to see priority breakdown
             </p>
           </div>
@@ -105,25 +105,25 @@ const TaskPriorityBreakdown = ({ tasks }: TaskPriorityBreakdownProps) => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className={`p-1.5 rounded-lg ${config.bgColor}`}>
-                        <Icon className={`w-4 h-4 ${config.color}`} />
+                      <div className={`p-1.5 rounded-lg ${config.bgColor} dark:bg-opacity-20`}>
+                        <Icon className={`w-4 h-4 ${config.color} dark:opacity-90`} />
                       </div>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {config.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-900">
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">
                         {count}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         ({percentage.toFixed(0)}%)
                       </span>
                     </div>
                   </div>
 
                   {/* Progress bar */}
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                     <motion.div
                       className={`h-full bg-gradient-to-r ${config.gradient} rounded-full`}
                       initial={{ width: 0 }}
@@ -137,18 +137,18 @@ const TaskPriorityBreakdown = ({ tasks }: TaskPriorityBreakdownProps) => {
 
             {/* Summary section */}
             <motion.div
-              className="mt-6 pt-6 border-t space-y-3"
+              className="mt-6 pt-6 border-t dark:border-gray-700 space-y-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Most common priority:</span>
+                <span className="text-gray-600 dark:text-gray-400">Most common priority:</span>
                 <Badge className={`${priorityConfig[
                   Object.entries(priorityCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as keyof typeof priorityConfig || 'MEDIUM'
                 ].bgColor} ${priorityConfig[
                   Object.entries(priorityCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as keyof typeof priorityConfig || 'MEDIUM'
-                ].color} border-0`}>
+                ].color} border-0 dark:bg-opacity-20`}>
                   {priorityConfig[
                     Object.entries(priorityCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as keyof typeof priorityConfig || 'MEDIUM'
                   ].label}
@@ -156,8 +156,8 @@ const TaskPriorityBreakdown = ({ tasks }: TaskPriorityBreakdownProps) => {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">High priority tasks:</span>
-                <span className="font-semibold text-orange-600">
+                <span className="text-gray-600 dark:text-gray-400">High priority tasks:</span>
+                <span className="font-semibold text-orange-600 dark:text-orange-400">
                   {(priorityCounts.URGENT || 0) + (priorityCounts.HIGH || 0)}
                 </span>
               </div>

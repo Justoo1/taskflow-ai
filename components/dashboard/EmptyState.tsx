@@ -1,4 +1,3 @@
-// components/dashboard/EmptyState.tsx
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -40,7 +39,7 @@ const EmptyState = ({
   const IconComponent = iconComponents[icon];
 
   return (
-    <Card className="border-2 border-dashed border-gray-300 bg-gray-50/50">
+    <Card className="border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-800/50">
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
         <motion.div
           initial={{ scale: 0 }}
@@ -50,13 +49,13 @@ const EmptyState = ({
         >
           <div className="relative">
             {/* Main icon container */}
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
-              <IconComponent className="w-10 h-10 text-blue-600" />
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl flex items-center justify-center">
+              <IconComponent className="w-10 h-10 text-blue-600 dark:text-blue-400" />
             </div>
 
             {/* Floating decoration */}
             <motion.div
-              className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center"
+              className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 dark:from-purple-600 dark:to-pink-600 rounded-lg flex items-center justify-center"
               animate={{
                 y: [0, -8, 0],
                 rotate: [0, 10, 0],
@@ -78,8 +77,8 @@ const EmptyState = ({
           transition={{ delay: 0.2 }}
           className="space-y-2 mb-8"
         >
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <p className="text-gray-600 max-w-md">{description}</p>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+          <p className="text-gray-600 dark:text-gray-400 max-w-md">{description}</p>
         </motion.div>
 
         <motion.div
@@ -109,33 +108,33 @@ const EmptyState = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-8 pt-8 border-t border-gray-200 w-full max-w-md"
+          className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 w-full max-w-md"
         >
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
             Quick Tips
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-1.5" />
-              <p className="text-xs text-gray-600">
+              <div className="w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full mt-1.5" />
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Use keyboard shortcuts for faster task creation
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 bg-purple-600 rounded-full mt-1.5" />
-              <p className="text-xs text-gray-600">
+              <div className="w-1.5 h-1.5 bg-purple-600 dark:bg-purple-400 rounded-full mt-1.5" />
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Set priorities to stay focused on what matters
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-1.5" />
-              <p className="text-xs text-gray-600">
+              <div className="w-1.5 h-1.5 bg-green-600 dark:bg-green-400 rounded-full mt-1.5" />
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Add due dates to track deadlines
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 bg-orange-600 rounded-full mt-1.5" />
-              <p className="text-xs text-gray-600">
+              <div className="w-1.5 h-1.5 bg-orange-600 dark:bg-orange-400 rounded-full mt-1.5" />
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Let AI help break down complex tasks
               </p>
             </div>

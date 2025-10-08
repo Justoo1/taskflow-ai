@@ -42,7 +42,7 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-xl">
+    <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 dark:from-blue-700 dark:via-purple-700 dark:to-indigo-800 rounded-2xl shadow-xl">
       {/* Animated background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse" />
@@ -64,7 +64,7 @@ const QuickActions = () => {
                 Ready to be productive?
               </h2>
             </div>
-            <p className="text-blue-100 max-w-2xl">
+            <p className="text-blue-100 dark:text-blue-200 max-w-2xl">
               Create tasks, start projects, or let AI help you plan your day efficiently
             </p>
           </motion.div>
@@ -81,9 +81,9 @@ const QuickActions = () => {
                 key={action.label}
                 onClick={action.onClick}
                 className={`
-                  group relative bg-white/10 backdrop-blur-sm rounded-xl p-4
-                  hover:bg-white/20 transition-all duration-300
-                  border border-white/20 hover:border-white/40
+                  group relative bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-4
+                  hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300
+                  border border-white/20 dark:border-white/10 hover:border-white/40 dark:hover:border-white/20
                   flex flex-col items-center gap-2 text-center
                   hover:scale-105 active:scale-95
                 `}
@@ -103,7 +103,7 @@ const QuickActions = () => {
                   <p className="font-semibold text-white text-sm">
                     {action.label}
                   </p>
-                  <p className="text-xs text-blue-100 opacity-80 hidden lg:block">
+                  <p className="text-xs text-blue-100 dark:text-blue-200 opacity-80 hidden lg:block">
                     {action.description}
                   </p>
                 </div>
@@ -117,7 +117,7 @@ const QuickActions = () => {
 
         {/* Quick stats bar */}
         <motion.div 
-          className="mt-6 pt-6 border-t border-white/20"
+          className="mt-6 pt-6 border-t border-white/20 dark:border-white/10"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
