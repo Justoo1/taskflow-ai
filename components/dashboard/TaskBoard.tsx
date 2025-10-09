@@ -33,7 +33,8 @@ const columns: { id: Status; title: string }[] = [
   { id: 'TODO', title: 'To Do' },
   { id: 'IN_PROGRESS', title: 'In Progress' },
   { id: 'REVIEW', title: 'Review' },
-  { id: 'DONE', title: 'Done' },];
+  { id: 'DONE', title: 'Done' },
+];
 
 export function TaskBoard({ tasks: initialTasks }: TaskBoardProps) {
   const [tasks, setTasks] = useState(initialTasks);
@@ -75,8 +76,8 @@ export function TaskBoard({ tasks: initialTasks }: TaskBoardProps) {
       await updateTaskStatus(taskId, newStatus);
       toast.success('Task updated successfully');
     } catch (error) {
+      console.error(error);
       // Revert on error
-      console.log(error);
       setTasks((prevTasks) =>
         prevTasks.map((t) =>
           t.id === taskId ? { ...t, status: task.status } : t

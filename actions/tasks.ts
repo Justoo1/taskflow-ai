@@ -16,6 +16,7 @@ const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
   description: z.string().optional(),
   priority: z.nativeEnum(Priority).optional(),
+  status: z.nativeEnum(Status).optional(),
   projectId: z.string().optional(),
   dueDate: z.date().optional(),
 });
@@ -76,6 +77,7 @@ export async function createTask(data: z.infer<typeof createTaskSchema>) {
       title: validated.title,
       description: validated.description,
       priority: validated.priority || Priority.MEDIUM,
+      status: validated.status || Status.TODO,
       projectId: validated.projectId,
       dueDate: validated.dueDate,
       userId: session.user.id,
