@@ -177,3 +177,16 @@ export async function updateTask(
 
   revalidatePath('/dashboard');
 }
+
+export async function getTaskCount() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const count = await prisma.task.count({
+    where: { userId: session.user.id },
+  });
+
+  return count;
+}

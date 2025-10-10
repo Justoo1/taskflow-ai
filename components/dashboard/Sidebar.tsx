@@ -27,44 +27,46 @@ interface SidebarProps {
     email: string;
     image?: string | null;
   };
+  taskCount: number;
+  projectCount: number;
 }
 
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    badge: null,
-  },
-  {
-    name: 'Tasks',
-    href: '/tasks',
-    icon: CheckSquare,
-    badge: '12',
-  },
-  {
-    name: 'Projects',
-    href: '/projects',
-    icon: FolderKanban,
-    badge: null,
-  },
-  {
-    name: 'AI Assistant',
-    href: '/ai',
-    icon: Sparkles,
-    badge: 'New',
-  },
-  {
-    name: 'Settings',
-    href: '/settings',
-    icon: Settings,
-    badge: null,
-  },
-];
-
-const Sidebar = ({ user }: SidebarProps) => {
+const Sidebar = ({ user, taskCount, projectCount }: SidebarProps) => {
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+  const navigation = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      badge: null,
+    },
+    {
+      name: 'Tasks',
+      href: '/tasks',
+      icon: CheckSquare,
+      badge: taskCount > 0 ? taskCount.toString() : null,
+    },
+    {
+      name: 'Projects',
+      href: '/projects',
+      icon: FolderKanban,
+      badge: projectCount > 0 ? projectCount.toString() : null,
+    },
+    {
+      name: 'AI Assistant',
+      href: '/ai',
+      icon: Sparkles,
+      badge: 'New',
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      icon: Settings,
+      badge: null,
+    },
+  ];
 
   return (
     <>

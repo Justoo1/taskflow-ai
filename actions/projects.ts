@@ -180,3 +180,16 @@ export async function generateAIProjectPlan(projectName: string, description: st
     throw new Error('Failed to generate project plan');
   }
 }
+
+export async function getProjectCount() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const count = await prisma.project.count({
+    where: { userId: session.user.id },
+  });
+
+  return count;
+}
