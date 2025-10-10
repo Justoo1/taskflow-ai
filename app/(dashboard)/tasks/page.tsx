@@ -1,8 +1,9 @@
+import TaskListClient from '@/components/dashboard/TasksListClient'
 import React from 'react'
 
 const TasksListPage = () => {
   return (
-    <div>TaskListPage</div>
+    <TaskListClient />
   )
 }
 

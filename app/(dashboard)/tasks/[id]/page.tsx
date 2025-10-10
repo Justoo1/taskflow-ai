@@ -305,7 +305,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/tasks')}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>

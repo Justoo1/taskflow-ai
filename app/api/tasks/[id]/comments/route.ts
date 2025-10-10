@@ -5,16 +5,17 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } = await params;
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const task = await prisma.task.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     if (!task) {
@@ -35,14 +36,10 @@ export async function POST(
       );
     }
 
-    // For now, return a mock comment since Comment model needs to be added to Prisma schema
-    // TODO: need to create the Comment model and uncomment the actual implementation below
-    
-    /*
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
-        taskId: params.id,
+        taskId: id,
         authorId: session.user.id,
       },
       include: {
@@ -58,25 +55,7 @@ export async function POST(
     });
 
     return NextResponse.json(comment);
-    */
-
-    // Mock response until Comment model is added
-    const mockComment = {
-      id: `comment-${Date.now()}`,
-      content: content.trim(),
-      authorId: session.user.id,
-      taskId: params.id,
-      author: {
-        id: session.user.id,
-        name: session.user.name || null,
-        email: session.user.email || '',
-        image: session.user.image || null,
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    return NextResponse.json(mockComment);
+    
   } catch (error) {
     console.error('Error creating comment:', error);
     return NextResponse.json(

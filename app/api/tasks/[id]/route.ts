@@ -37,6 +37,36 @@ export async function GET(
             color: true,
           },
         },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        activities: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
 
@@ -49,13 +79,7 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // For now, return task without comments and activities
-    // You'll need to create Comment and Activity models in your Prisma schema
-    return NextResponse.json({
-      ...task,
-      comments: [],
-      activities: [],
-    });
+    return NextResponse.json(task);
   } catch (error) {
     console.error('Error fetching task:', error);
     return NextResponse.json(
