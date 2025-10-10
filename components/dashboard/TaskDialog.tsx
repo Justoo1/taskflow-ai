@@ -30,9 +30,11 @@ interface TaskDialogProps {
   onOpenChange: (open: boolean) => void;
   task?: Task | null;
   defaultStatus?: Status;
+  defaultProjectId?: string;
+  onSuccess?: () => void;
 }
 
-const TaskDialog = ({ open, onOpenChange, task, defaultStatus }: TaskDialogProps) => {
+const TaskDialog = ({ open, onOpenChange, task, defaultStatus, defaultProjectId, onSuccess }: TaskDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -82,6 +84,7 @@ const TaskDialog = ({ open, onOpenChange, task, defaultStatus }: TaskDialogProps
           priority: formData.priority as Priority,
           status: formData.status,
           dueDate: formData.dueDate || undefined,
+          projectId: defaultProjectId,
         });
         toast.success('Task updated successfully');
       } else {
@@ -92,11 +95,13 @@ const TaskDialog = ({ open, onOpenChange, task, defaultStatus }: TaskDialogProps
           priority: formData.priority as Priority,
           status: formData.status,
           dueDate: formData.dueDate || undefined,
+          projectId: defaultProjectId,
         });
         toast.success('Task created successfully');
       }
-      
+
       onOpenChange(false);
+      onSuccess?.();
     } catch (error) {
       console.error('Error saving task:', error);
       toast.error(task ? 'Failed to update task' : 'Failed to create task');
