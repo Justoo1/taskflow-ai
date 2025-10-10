@@ -5,13 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Plus, Sparkles, FolderPlus, Calendar, Users, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const QuickActions = () => {
+interface QuickActionsProps {
+  onNewTask?: () => void;
+}
+
+const QuickActions = ({ onNewTask }: QuickActionsProps) => {
   const actions = [
     {
       icon: Plus,
       label: 'New Task',
       description: 'Create a task',
-      onClick: () => console.log('Create task'),
+      onClick: () => onNewTask?.(),
       gradient: 'from-blue-500 to-blue-600',
       hoverGradient: 'hover:from-blue-600 hover:to-blue-700',
     },
