@@ -28,43 +28,45 @@ interface MobileSidebarProps {
   };
   isOpen: boolean;
   onClose: () => void;
+  taskCount: number;
+  projectCount: number;
 }
 
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    badge: null,
-  },
-  {
-    name: 'Tasks',
-    href: '/dashboard/tasks',
-    icon: CheckSquare,
-    badge: '12',
-  },
-  {
-    name: 'Projects',
-    href: '/dashboard/projects',
-    icon: FolderKanban,
-    badge: null,
-  },
-  {
-    name: 'AI Assistant',
-    href: '/dashboard/ai',
-    icon: Sparkles,
-    badge: 'New',
-  },
-  {
-    name: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
-    badge: null,
-  },
-];
-
-const MobileSidebar = ({ user, isOpen, onClose }: MobileSidebarProps) => {
+const MobileSidebar = ({ user, isOpen, onClose, taskCount, projectCount }: MobileSidebarProps) => {
   const pathname = usePathname();
+
+  const navigation = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      badge: null,
+    },
+    {
+      name: 'Tasks',
+      href: '/tasks',
+      icon: CheckSquare,
+      badge: taskCount > 0 ? taskCount.toString() : null,
+    },
+    {
+      name: 'Projects',
+      href: '/projects',
+      icon: FolderKanban,
+      badge: projectCount > 0 ? projectCount.toString() : null,
+    },
+    {
+      name: 'AI Assistant',
+      href: '/ai',
+      icon: Sparkles,
+      badge: 'New',
+    },
+    {
+      name: 'Settings',
+      href: '/dashboard/settings',
+      icon: Settings,
+      badge: null,
+    },
+  ];
 
   return (
     <AnimatePresence>

@@ -25,7 +25,7 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <div className="lg:pl-64">
-        <Header user={user} />
+        <Header user={user} taskCount={taskCount} projectCount={projectCount} />
 
         <main className="py-6 px-4 sm:px-6 lg:px-8">
           {children}

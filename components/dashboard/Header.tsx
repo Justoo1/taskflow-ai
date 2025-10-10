@@ -24,9 +24,11 @@ interface HeaderProps {
     email: string;
     image?: string | null;
   };
+  taskCount: number;
+  projectCount: number;
 }
 
-const Header = ({ user }: HeaderProps) => {
+const Header = ({ user, taskCount, projectCount }: HeaderProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,10 +44,12 @@ const Header = ({ user }: HeaderProps) => {
   return (
     <>
       {/* Mobile Sidebar */}
-      <MobileSidebar 
-        user={user} 
-        isOpen={mobileMenuOpen} 
-        onClose={() => setMobileMenuOpen(false)} 
+      <MobileSidebar
+        user={user}
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        taskCount={taskCount}
+        projectCount={projectCount}
       />
 
       <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 transition-colors">
