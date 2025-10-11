@@ -102,7 +102,7 @@ const Header = ({ user, taskCount, projectCount }: HeaderProps) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 ml-16"
                 >
                   <h1 className="text-lg font-semibold text-gray-900 dark:text-white hidden sm:block">
                     Welcome back, {(user.name || user.email).split(' ')[0]}! 👋

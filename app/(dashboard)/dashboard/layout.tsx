@@ -1,9 +1,8 @@
 // app/(dashboard)/dashboard/layout.tsx
 import { requireAuth } from '@/lib/auth-helpers';
-import Sidebar from '@/components/dashboard/Sidebar';
-import Header from '@/components/dashboard/Header';
 import { getTaskCount } from '@/actions/tasks';
 import { getProjectCount } from '@/actions/projects';
+import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient';
 
 export default async function DashboardLayout({
   children,
@@ -19,18 +18,12 @@ export default async function DashboardLayout({
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
-      {/* Sidebar */}
-      <Sidebar user={user} taskCount={taskCount} projectCount={projectCount} />
-
-      {/* Main Content */}
-      <div className="lg:pl-64">
-        <Header user={user} taskCount={taskCount} projectCount={projectCount} />
-
-        <main className="py-6 px-4 sm:px-6 lg:px-8">
-          {children}
-        </main>
-      </div>
-    </div>
+    <DashboardLayoutClient
+      user={user}
+      taskCount={taskCount}
+      projectCount={projectCount}
+    >
+      {children}
+    </DashboardLayoutClient>
   );
 }

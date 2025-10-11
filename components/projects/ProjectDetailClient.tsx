@@ -152,7 +152,7 @@ const ProjectDetailClient: React.FC<ProjectDetailClientProps> = ({ project: init
     try {
       await deleteProject(project.id);
       toast.success('Project deleted successfully');
-      router.push('/projects');
+      router.push('/dashboard/projects');
     } catch (error) {
       console.error('Error deleting project:', error);
       toast.error('Failed to delete project');
@@ -207,7 +207,7 @@ const ProjectDetailClient: React.FC<ProjectDetailClientProps> = ({ project: init
   };
 
   const handleTaskClick = (taskId: string) => {
-    router.push(`/tasks/${taskId}`);
+    router.push(`/dashboard/tasks/${taskId}`);
   };
 
   return (
@@ -218,7 +218,7 @@ const ProjectDetailClient: React.FC<ProjectDetailClientProps> = ({ project: init
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push('/projects')}
+            onClick={() => router.push('/dashboard/projects')}
             className="shrink-0 mt-1"
           >
             <ArrowLeft className="h-5 w-5" />

@@ -120,8 +120,8 @@ export async function updateProject(
     data,
   });
 
-  revalidatePath('/projects');
-  revalidatePath(`/projects/${projectId}`);
+  revalidatePath('/dashboard/projects');
+  revalidatePath(`/dashboard/projects/${projectId}`);
   return updated;
 }
 

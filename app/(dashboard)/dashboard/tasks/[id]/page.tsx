@@ -28,6 +28,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 
+import TaskAIAnalysis from '@/components/tasks/TaskAIAnalysis';
+
 // Types
 interface TaskUser {
   id: string;
@@ -130,7 +132,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
         if (!response.ok) {
           const errorData = await response.json();
           toast.error(errorData.error || 'Failed to load task');
-          router.push('/tasks');
+          router.push('/dashboard/tasks');
           return;
         }
         const data: Task = await response.json();
@@ -148,7 +150,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
       } catch (error) {
         console.error('Error fetching task:', error);
         toast.error('Failed to load task');
-        router.push('/tasks');
+        router.push('/dashboard/tasks');
       } finally {
         setIsLoading(false);
       }
@@ -305,7 +307,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push('/tasks')}
+                onClick={() => router.push('/dashboard/tasks')}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -399,6 +401,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
+            
             {/* Description */}
             <Card>
               <CardHeader>
@@ -507,7 +510,7 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
                 </div>
               </CardContent>
             </Card>
-
+            
             {/* Activity Log */}
             <Card>
               <CardHeader>
@@ -544,6 +547,8 @@ const TaskDetailsPage = ({ params }: TaskPageProps) => {
 
           {/* Right Column - Details Sidebar */}
           <div className="space-y-6">
+            {/* AI Analyses */}
+            <TaskAIAnalysis taskDescription={task.description} taskId={task.id} taskTitle={task.title} />
             {/* Status */}
             <Card>
               <CardHeader>

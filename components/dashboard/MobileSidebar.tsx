@@ -44,19 +44,19 @@ const MobileSidebar = ({ user, isOpen, onClose, taskCount, projectCount }: Mobil
     },
     {
       name: 'Tasks',
-      href: '/tasks',
+      href: '/dashboard/tasks',
       icon: CheckSquare,
       badge: taskCount > 0 ? taskCount.toString() : null,
     },
     {
       name: 'Projects',
-      href: '/projects',
+      href: '/dashboard/projects',
       icon: FolderKanban,
       badge: projectCount > 0 ? projectCount.toString() : null,
     },
     {
       name: 'AI Assistant',
-      href: '/ai',
+      href: '/dashboard/ai',
       icon: Sparkles,
       badge: 'New',
     },

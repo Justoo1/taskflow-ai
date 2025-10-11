@@ -1,4 +1,3 @@
-// components/projects/ProjectsClient.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -14,8 +13,6 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  AlertCircle,
-  Sparkles,
   TrendingUp,
   ArrowLeft,
 } from 'lucide-react';
@@ -36,6 +33,8 @@ import { useRouter } from 'next/navigation';
 import { deleteProject } from '@/actions/projects';
 import ProjectDialog from './ProjectDialog';
 import { Status, Priority } from '@prisma/client';
+
+import ProjectAIPlanning from '@/components/projects/ProjectAIPlanning';
 
 interface ProjectTask {
   id: string;
@@ -109,7 +108,7 @@ const ProjectsClient: React.FC<ProjectsClientProps> = ({ initialProjects }) => {
   };
 
   const handleProjectClick = (projectId: string) => {
-    router.push(`/projects/${projectId}`);
+    router.push(`/dashboard/projects/${projectId}`);
   };
 
   const calculateProjectStats = (project: Project) => {
@@ -436,6 +435,13 @@ const ProjectsClient: React.FC<ProjectsClientProps> = ({ initialProjects }) => {
           router.refresh();
         }}
       />
+      <ProjectAIPlanning 
+      onCreateProject={(plan, name, description) => {
+        // Handle project creation with AI-generated plan
+        console.log('Creating project:', { plan, name, description });
+        // You can integrate this with your existing createProject action
+      }}
+    />
     </div>
   );
 };

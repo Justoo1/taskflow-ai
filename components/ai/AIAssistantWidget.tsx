@@ -18,15 +18,16 @@ const AIAssistantWidget = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`fixed ${
-              isMinimized ? 'bottom-24 right-6' : 'bottom-24 right-6'
-            } z-50 ${isMinimized ? 'w-80' : 'w-full max-w-2xl'}`}
+            className="fixed bottom-44 right-6 z-50"
             style={{
-              maxHeight: isMinimized ? '60px' : 'calc(100vh - 200px)',
+              width: isMinimized ? '320px' : '450px',
+              maxWidth: 'calc(100vw - 48px)',
+              height: isMinimized ? '60px' : 'calc(100vh - 200px)',
+              maxHeight: isMinimized ? '60px' : '700px',
             }}
           >
             {isMinimized ? (
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-2xl p-4 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-2xl p-4 flex items-center justify-between h-full">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-white" />
                   <span className="text-white font-medium">AI Assistant</span>
@@ -51,7 +52,7 @@ const AIAssistantWidget = () => {
                 </div>
               </div>
             ) : (
-              <div className="relative">
+              <div className="relative h-full">
                 <Button
                   onClick={() => setIsMinimized(true)}
                   variant="ghost"

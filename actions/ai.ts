@@ -1,33 +1,30 @@
+// actions/ai.ts
 'use server';
 
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { aiChat } from '@/lib/ai-assistant';
+import { analyzeTask, getDailyRecommendations, generateProjectPlan } from '@/lib/openai';
 import { prisma } from '@/lib/prisma';
-import { aiChat, getProductivityInsights, analyzeProject } from '@/lib/ai-assistant';
-import { revalidatePath } from 'next/cache';
 
-export async function sendChatMessage(
-  message: string,
-  conversationId?: string
-) {
+/**
+ * Send a chat message to the AI assistant
+ */
+export async function sendChatMessage(message: string, conversationId?: string) {
   const session = await getServerSession(authOptions);
+  
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
 
-  // Check subscription
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  });
-
   // Get user context
-  const [tasks, projects] = await Promise.all([
+  const [tasks, projects, subscription] = await Promise.all([
     prisma.task.findMany({
       where: { userId: session.user.id },
-      select: {
-        id: true,
-        title: true,
-        priority: true,
+      select: { 
+        id: true, 
+        title: true, 
+        priority: true, 
         status: true,
         dueDate: true,
       },
@@ -36,127 +33,192 @@ export async function sendChatMessage(
     }),
     prisma.project.findMany({
       where: { userId: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        description: true,
+      select: { 
+        id: true, 
+        name: true, 
+        description: true 
       },
       take: 10,
     }),
+    prisma.subscription.findUnique({
+      where: { userId: session.user.id },
+    }),
   ]);
 
-  // Call AI
-  const response = await aiChat(message, {
+  const context = {
     tasks,
     projects,
     conversationId,
     userPlan: subscription?.plan || 'FREE',
-  });
+  };
+
+  const response = await aiChat(message, context);
 
   // Track AI usage
   await prisma.aIUsage.create({
     data: {
       userId: session.user.id,
       feature: 'chat_assistant',
-      tokens: response.tokensUsed || 0,
-      cost: response.cost || 0,
+      tokens: response.tokensUsed,
+      cost: response.cost,
     },
   });
 
   return response;
 }
 
-export async function getAIInsights() {
+/**
+ * Analyze a task with AI
+ */
+export async function analyzeTaskWithAI(taskId: string) {
   const session = await getServerSession(authOptions);
+  
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
 
+  // Check if user has Pro plan
   const subscription = await prisma.subscription.findUnique({
     where: { userId: session.user.id },
   });
 
   if (subscription?.plan === 'FREE') {
-    throw new Error('AI Insights require a Pro subscription');
+    throw new Error('AI Task Analysis is a Pro feature. Please upgrade your plan.');
   }
 
-  const tasks = await prisma.task.findMany({
-    where: { userId: session.user.id },
-    include: {
-      project: true,
-    },
-  });
-
-  const insights = await getProductivityInsights(tasks);
-
-  await prisma.aIUsage.create({
-    data: {
-      userId: session.user.id,
-      feature: 'productivity_insights',
-      tokens: 300,
-      cost: 0.005,
-    },
-  });
-
-  return insights;
-}
-
-export async function analyzeProjectWithAI(projectId: string) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    throw new Error('Unauthorized');
-  }
-
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (subscription?.plan === 'FREE') {
-    throw new Error('Project analysis requires a Pro subscription');
-  }
-
-  const project = await prisma.project.findUnique({
+  // Get the task
+  const task = await prisma.task.findFirst({
     where: {
-      id: projectId,
+      id: taskId,
       userId: session.user.id,
-    },
-    include: {
-      tasks: true,
     },
   });
 
-  if (!project) {
-    throw new Error('Project not found');
+  if (!task) {
+    throw new Error('Task not found');
   }
 
-  const analysis = await analyzeProject(project);
+  const analysis = await analyzeTask(task.title, task.description || undefined);
 
+  // Track AI usage
   await prisma.aIUsage.create({
     data: {
       userId: session.user.id,
-      feature: 'project_analysis',
-      tokens: 800,
-      cost: 0.015,
+      feature: 'task_analysis',
+      tokens: 500, // Approximate
+      cost: 0.005, // Approximate
     },
   });
 
-  revalidatePath(`/projects/${projectId}`);
   return analysis;
 }
 
-export async function getChatHistory(limit: number = 10) {
+/**
+ * Get daily AI recommendations
+ */
+export async function getDailyAIRecommendations() {
   const session = await getServerSession(authOptions);
+  
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
 
-  // This would fetch from a conversations table if you implement persistent chat
-  // For now, returning empty array as conversations are ephemeral
-  return [];
+  // Check if user has Pro plan
+  const subscription = await prisma.subscription.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (subscription?.plan === 'FREE') {
+    throw new Error('Daily Recommendations is a Pro feature. Please upgrade your plan.');
+  }
+
+  // Get user's tasks
+  const tasks = await prisma.task.findMany({
+    where: {
+      userId: session.user.id,
+      status: {
+        not: 'DONE',
+      },
+    },
+    select: {
+      title: true,
+      priority: true,
+      dueDate: true,
+    },
+    take: 50,
+    orderBy: [
+      { priority: 'desc' },
+      { dueDate: 'asc' },
+    ],
+  });
+
+  if (tasks.length === 0) {
+    return [];
+  }
+
+  const recommendations = await getDailyRecommendations(
+    tasks.map(task => ({
+      ...task,
+      dueDate: task.dueDate ?? undefined,
+    }))
+  );
+
+  // Track AI usage
+  await prisma.aIUsage.create({
+    data: {
+      userId: session.user.id,
+      feature: 'daily_recommendations',
+      tokens: 400,
+      cost: 0.004,
+    },
+  });
+
+  return recommendations;
 }
 
+/**
+ * Generate AI project plan
+ */
+export async function generateAIProjectPlan(
+  projectName: string,
+  projectDescription: string
+) {
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  // Check if user has Pro plan
+  const subscription = await prisma.subscription.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (subscription?.plan === 'FREE') {
+    throw new Error('AI Project Planning is a Pro feature. Please upgrade your plan.');
+  }
+
+  const plan = await generateProjectPlan(projectName, projectDescription);
+
+  // Track AI usage
+  await prisma.aIUsage.create({
+    data: {
+      userId: session.user.id,
+      feature: 'project_planning',
+      tokens: 600,
+      cost: 0.006,
+    },
+  });
+
+  return plan;
+}
+
+/**
+ * Get AI usage statistics
+ */
 export async function getAIUsageStats() {
   const session = await getServerSession(authOptions);
+  
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
@@ -164,27 +226,23 @@ export async function getAIUsageStats() {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const usage = await prisma.aIUsage.findMany({
+  const stats = await prisma.aIUsage.aggregate({
     where: {
       userId: session.user.id,
       createdAt: {
         gte: thirtyDaysAgo,
       },
     },
-    orderBy: {
-      createdAt: 'desc',
+    _sum: {
+      tokens: true,
+      cost: true,
     },
+    _count: true,
   });
 
-  const stats = {
-    totalTokens: usage.reduce((sum, u) => sum + u.tokens, 0),
-    totalCost: usage.reduce((sum, u) => sum + u.cost, 0),
-    byFeature: usage.reduce((acc, u) => {
-      acc[u.feature] = (acc[u.feature] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    recentUsage: usage.slice(0, 10),
+  return {
+    totalTokens: stats._sum.tokens || 0,
+    totalCost: stats._sum.cost || 0,
+    usageCount: stats._count || 0,
   };
-
-  return stats;
 }

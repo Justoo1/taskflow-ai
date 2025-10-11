@@ -1,4 +1,3 @@
-// components/dashboard/DashboardContent.tsx
 'use client';
 
 import { TaskBoard } from '@/components/dashboard/TaskBoard';
@@ -9,6 +8,7 @@ import ProductivityChart from '@/components/dashboard/ProductivityChart';
 import TaskPriorityBreakdown from '@/components/dashboard/TaskPriorityBreakdown';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 import TaskDialog from '@/components/dashboard/TaskDialog';
+import DailyRecommendations from '@/components/dashboard/DailyRecommendations';
 import { useTaskDialog } from '@/hooks/useTaskDialog';
 import type { Task } from '@/types/dashboard';
 
@@ -61,6 +61,9 @@ export default function DashboardContent({ tasks, stats, plan }: DashboardConten
 
           {/* Right Column - Sidebar Widgets (1 column wide) */}
           <div className="space-y-6">
+            {/* 🌟 AI Daily Recommendations - NEW! */}
+            <DailyRecommendations plan={plan} />
+
             {/* Recent Activity */}
             <RecentActivity tasks={tasks.slice(0, 5)} />
 

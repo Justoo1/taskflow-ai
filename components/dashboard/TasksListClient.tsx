@@ -275,7 +275,7 @@ const TasksListClient: React.FC = () => {
                     Delete
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push(`/tasks/${task.id}`)}>
+                  <DropdownMenuItem onClick={() => router.push(`/dashboard/tasks/${task.id}`)}>
                     <Eye className="h-4 w-4 mr-2" />
                     View
                   </DropdownMenuItem>
