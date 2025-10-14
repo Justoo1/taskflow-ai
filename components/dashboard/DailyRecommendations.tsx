@@ -13,6 +13,55 @@ interface DailyRecommendationsProps {
   plan: string;
 }
 
+interface CachedRecommendations {
+  recommendations: string[];
+  date: string; // Format: YYYY-MM-DD
+  timestamp: number;
+}
+
+// Utility functions for localStorage caching
+const CACHE_KEY = 'daily-ai-recommendations';
+
+const getTodayDateString = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0]; // Returns YYYY-MM-DD
+};
+
+const getCachedRecommendations = (): CachedRecommendations | null => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+
+    const data: CachedRecommendations = JSON.parse(cached);
+    const today = getTodayDateString();
+
+    // Check if cached data is from today
+    if (data.date === today) {
+      return data;
+    }
+
+    // Cache is expired, remove it
+    localStorage.removeItem(CACHE_KEY);
+    return null;
+  } catch (error) {
+    console.error('Error reading cached recommendations:', error);
+    return null;
+  }
+};
+
+const saveCachedRecommendations = (recommendations: string[]): void => {
+  try {
+    const data: CachedRecommendations = {
+      recommendations,
+      date: getTodayDateString(),
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving cached recommendations:', error);
+  }
+};
+
 export default function DailyRecommendations({ plan }: DailyRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,14 +69,28 @@ export default function DailyRecommendations({ plan }: DailyRecommendationsProps
 
   const isPro = plan !== 'FREE';
 
-  const loadRecommendations = async () => {
+  const loadRecommendations = async (forceRefresh: boolean = false) => {
     if (!isPro) return;
+
+    // Check cache first if not forcing refresh
+    if (!forceRefresh) {
+      const cached = getCachedRecommendations();
+      if (cached) {
+        setRecommendations(cached.recommendations);
+        setLastUpdated(new Date(cached.timestamp));
+        return;
+      }
+    }
 
     setIsLoading(true);
     try {
       const recs = await getDailyAIRecommendations();
       setRecommendations(recs);
-      setLastUpdated(new Date());
+      const now = new Date();
+      setLastUpdated(now);
+
+      // Save to cache
+      saveCachedRecommendations(recs);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -105,7 +168,7 @@ export default function DailyRecommendations({ plan }: DailyRecommendationsProps
           <Button
             variant="ghost"
             size="sm"
-            onClick={loadRecommendations}
+            onClick={() => loadRecommendations(true)}
             disabled={isLoading}
             className="hover:bg-white/50 dark:hover:bg-gray-800/50"
           >

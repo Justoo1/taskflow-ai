@@ -2,6 +2,7 @@
 import { requireAuth } from '@/lib/auth-helpers';
 import { getTaskCount } from '@/actions/tasks';
 import { getProjectCount } from '@/actions/projects';
+import { getUserSubscription } from '@/actions/subscription';
 import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient';
 
 export default async function DashboardLayout({
@@ -11,10 +12,11 @@ export default async function DashboardLayout({
 }) {
   const user = await requireAuth();
 
-  // Fetch counts in parallel
-  const [taskCount, projectCount] = await Promise.all([
+  // Fetch counts and subscription in parallel
+  const [taskCount, projectCount, subscriptionPlan] = await Promise.all([
     getTaskCount(),
     getProjectCount(),
+    getUserSubscription(user.id),
   ]);
 
   return (
@@ -22,6 +24,7 @@ export default async function DashboardLayout({
       user={user}
       taskCount={taskCount}
       projectCount={projectCount}
+      subscriptionPlan={subscriptionPlan}
     >
       {children}
     </DashboardLayoutClient>

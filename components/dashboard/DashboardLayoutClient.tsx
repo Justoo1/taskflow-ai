@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,7 @@ interface DashboardLayoutClientProps {
   };
   taskCount: number;
   projectCount: number;
+  subscriptionPlan?: 'FREE' | 'PRO' | 'ENTERPRISE';
   children: ReactNode;
 }
 
@@ -24,9 +25,26 @@ export default function DashboardLayoutClient({
   user,
   taskCount,
   projectCount,
+  subscriptionPlan,
   children,
 }: DashboardLayoutClientProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    // Check on mount
+    checkScreenSize();
+
+    // Add event listener
+    window.addEventListener('resize', checkScreenSize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
@@ -40,7 +58,7 @@ export default function DashboardLayoutClient({
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="fixed inset-y-0 z-50"
           >
-            <Sidebar user={user} taskCount={taskCount} projectCount={projectCount} />
+            <Sidebar user={user} taskCount={taskCount} projectCount={projectCount} subscriptionPlan={subscriptionPlan} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -66,7 +84,7 @@ export default function DashboardLayoutClient({
       {/* Main Content */}
       <motion.div
         animate={{
-          paddingLeft: isSidebarOpen ? '256px' : '0px',
+          paddingLeft: isDesktop && isSidebarOpen ? '256px' : '0px',
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="lg:pl-64"

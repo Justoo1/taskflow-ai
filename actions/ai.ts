@@ -3,7 +3,7 @@
 
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { aiChat } from '@/lib/ai-assistant';
+import { aiChat, getProductivityInsights } from '@/lib/ai-assistant';
 import { analyzeTask, getDailyRecommendations, generateProjectPlan } from '@/lib/openai';
 import { prisma } from '@/lib/prisma';
 
@@ -245,4 +245,57 @@ export async function getAIUsageStats() {
     totalCost: stats._sum.cost || 0,
     usageCount: stats._count || 0,
   };
+}
+
+/**
+ * Get AI insights for productivity
+ */
+export async function getAIInsights() {
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  // Check if user has Pro plan
+  const subscription = await prisma.subscription.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (subscription?.plan === 'FREE') {
+    throw new Error('AI Insights is a Pro feature. Please upgrade your plan.');
+  }
+
+  // Get user's tasks with projects
+  const tasks = await prisma.task.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    include: {
+      project: true,
+    },
+    orderBy: [
+      { priority: 'desc' },
+      { dueDate: 'asc' },
+    ],
+  });
+
+  if (tasks.length === 0) {
+    return [];
+  }
+
+  // Get productivity insights
+  const insights = await getProductivityInsights(tasks);
+
+  // Track AI usage
+  await prisma.aIUsage.create({
+    data: {
+      userId: session.user.id,
+      feature: 'productivity_insights',
+      tokens: 600,
+      cost: 0.006,
+    },
+  });
+
+  return insights;
 }

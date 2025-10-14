@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -29,11 +29,49 @@ interface SidebarProps {
   };
   taskCount: number;
   projectCount: number;
+  subscriptionPlan?: 'FREE' | 'PRO' | 'ENTERPRISE';
 }
 
-const Sidebar = ({ user, taskCount, projectCount }: SidebarProps) => {
+const Sidebar = ({ user, taskCount, projectCount, subscriptionPlan = 'FREE' }: SidebarProps) => {
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Define upgrade card content based on plan
+  const getUpgradeCardContent = () => {
+    switch (subscriptionPlan) {
+      case 'FREE':
+        return {
+          title: 'Upgrade to Pro',
+          description: 'Unlock unlimited tasks and AI features',
+          buttonText: 'Upgrade Now',
+          show: true,
+        };
+      case 'PRO':
+        return {
+          title: 'Upgrade to Enterprise',
+          description: 'Get custom AI models and dedicated support',
+          buttonText: 'Upgrade Now',
+          show: true,
+        };
+      case 'ENTERPRISE':
+        return {
+          title: 'Enterprise Plan',
+          description: 'You have access to all premium features',
+          buttonText: 'Manage Plan',
+          show: true,
+        };
+      default:
+        return {
+          title: 'Upgrade to Pro',
+          description: 'Unlock unlimited tasks and AI features',
+          buttonText: 'Upgrade Now',
+          show: true,
+        };
+    }
+  };
+
+  const upgradeCardContent = getUpgradeCardContent();
 
   const navigation = [
     {
@@ -149,28 +187,31 @@ const Sidebar = ({ user, taskCount, projectCount }: SidebarProps) => {
               </ul>
 
               {/* Upgrade Card */}
-              <motion.div
-                className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 p-4 shadow-lg"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8" />
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Crown className="h-5 w-5 text-yellow-300" />
-                    <span className="text-sm font-bold text-white">Upgrade to Pro</span>
+              {upgradeCardContent.show && (
+                <motion.div
+                  className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 p-4 shadow-lg"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Crown className="h-5 w-5 text-yellow-300" />
+                      <span className="text-sm font-bold text-white">{upgradeCardContent.title}</span>
+                    </div>
+                    <p className="text-xs text-blue-100 mb-3">
+                      {upgradeCardContent.description}
+                    </p>
+                    <Button
+                      size="sm"
+                      className="w-full bg-white text-blue-600 hover:bg-gray-100 font-semibold shadow-md"
+                      onClick={() => router.push('/dashboard/pricing')}
+                    >
+                      {upgradeCardContent.buttonText}
+                    </Button>
                   </div>
-                  <p className="text-xs text-blue-100 mb-3">
-                    Unlock unlimited tasks and AI features
-                  </p>
-                  <Button
-                    size="sm"
-                    className="w-full bg-white text-blue-600 hover:bg-gray-100 font-semibold shadow-md"
-                  >
-                    Upgrade Now
-                  </Button>
-                </div>
-              </motion.div>
+                </motion.div>
+              )}
 
               {/* User Section */}
               <div className="mt-auto">
