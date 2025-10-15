@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { notifyCommentAdded } from '@/lib/notification-utils';
 
 export async function POST(
   request: NextRequest,
@@ -53,6 +54,26 @@ export async function POST(
         },
       },
     });
+
+    // Create activity entry
+  await prisma.activity.create({
+    data: {
+      action: 'commented on task',
+      taskId: id,
+      userId: session.user.id,
+      metadata: {
+        commentId: comment.id,
+        commentPreview: comment.content.substring(0, 100),
+      },
+    },
+  });
+
+  // Notify task owner about the comment
+  try {
+    await notifyCommentAdded(id, session.user.id, comment.content);
+  } catch (error) {
+    console.error('Failed to create notification:', error);
+  }
 
     return NextResponse.json(comment);
     

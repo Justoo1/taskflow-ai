@@ -9,7 +9,10 @@ import { analyzeTask } from '@/lib/openai';
 import { Status, Priority } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
-import { TaskAnalysis } from '@/types';
+import { 
+  notifyTaskCreated, 
+  notifyTaskStatusChange, 
+} from '@/lib/notification-utils';
 
 const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
@@ -84,6 +87,14 @@ export async function createTask(data: z.infer<typeof createTaskSchema>) {
     },
   });
 
+  // Create notification for new task
+  try {
+    await notifyTaskCreated(task.id);
+  } catch (error) {
+    console.error('Failed to create notification:', error);
+    // Don't fail the task creation if notification fails
+  }
+
   revalidatePath('/dashboard');
   return task;
 }
@@ -102,9 +113,32 @@ export async function updateTaskStatus(taskId: string, status: Status) {
     throw new Error('Task not found or unauthorized');
   }
 
-  await prisma.task.update({
+  const validated = await prisma.task.update({
     where: { id: taskId },
     data: { status },
+  });
+
+  // Create notification if status changed
+  if (validated.status && validated.status !== task.status) {
+    try {
+      await notifyTaskStatusChange(taskId, task.status, validated.status);
+    } catch (error) {
+      console.error('Failed to create notification:', error);
+    }
+  }
+
+  // Create activity entry
+  await prisma.activity.create({
+    data: {
+      action: 'task status updated',
+      taskId: validated.id,
+      userId: session.user.id,
+      metadata: {
+        taskId: validated.id,
+        taskPreview: validated.title,
+        status: validated.status,
+      },
+    },
   });
 
   revalidatePath('/dashboard');
@@ -126,6 +160,19 @@ export async function deleteTask(taskId: string) {
 
   await prisma.task.delete({
     where: { id: taskId },
+  });
+
+  // Create activity entry
+  await prisma.activity.create({
+    data: {
+      action: 'task deleted',
+      taskId: task.id,
+      userId: session.user.id,
+      metadata: {
+        taskId: task.id,
+        taskPreview: task.title,
+      },
+    },
   });
 
   revalidatePath('/dashboard');
@@ -169,9 +216,22 @@ export async function updateTask(
     throw new Error('Task not found or unauthorized');
   }
 
-  await prisma.task.update({
+  const updatedTask = await prisma.task.update({
     where: { id: taskId },
     data,
+  });
+
+  // Create activity entry
+  await prisma.activity.create({
+    data: {
+      action: 'task updated',
+      taskId: updatedTask.id,
+      userId: session.user.id,
+      metadata: {
+        taskId: updatedTask.id,
+        taskPreview: updatedTask.title,
+      },
+    },
   });
 
   revalidatePath('/dashboard');

@@ -1,13 +1,10 @@
-// components/shared/Header.tsx
+// components/dashboard/Header.tsx
 'use client';
 
 import { useState } from 'react';
-import { Menu, Search, Bell, Settings, User, Command, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/theme-toggle';
-import MobileSidebar from '@/components/dashboard/MobileSidebar';
+import { Bell, Search, Settings, User, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,96 +13,62 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { SearchDialog } from '@/components/dashboard/SearchDialog';
+import { useNotifications } from '@/hooks/useNotifications';
+import { getRelativeTime, getNotificationIcon, Notification } from '@/types/notification';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   user: {
-    id: string;
-    name: string | null;
+    name?: string | null;
     email: string;
-    image?: string | null;
   };
-  taskCount: number;
-  projectCount: number;
 }
 
-const Header = ({ user, taskCount, projectCount }: HeaderProps) => {
+export function Header({ user }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications();
 
-  const notifications = [
-    { id: 1, title: 'New task assigned', time: '5m ago', unread: true },
-    { id: 2, title: 'Project deadline approaching', time: '1h ago', unread: true },
-    { id: 3, title: 'Team member commented', time: '3h ago', unread: false },
-  ];
+  const handleNotificationClick = async (notification: Notification) => {
+    // Mark as read
+    if (!notification.read) {
+      await markAsRead(notification.id);
+    }
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+    // Navigate to action URL if available
+    if (notification.actionUrl) {
+      router.push(notification.actionUrl);
+    }
+  };
 
   return (
     <>
-      {/* Mobile Sidebar */}
-      <MobileSidebar
-        user={user}
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-        taskCount={taskCount}
-        projectCount={projectCount}
-      />
-
-      <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 transition-colors">
-        {/* Mobile menu button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="lg:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </Button>
-
-        {/* Separator */}
-        <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 lg:hidden" />
-
-        <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
-          {/* Search Bar */}
-          <div className="flex flex-1 items-center max-w-2xl">
+      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      
+      <header className="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4 flex-1">
             <AnimatePresence mode="wait">
-              {searchOpen ? (
+              {!searchOpen && (
                 <motion.div
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: '100%' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative w-full"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="flex items-center gap-4"
                 >
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
-                  <input
-                    type="text"
-                    placeholder="Search tasks, projects..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onBlur={() => !searchQuery && setSearchOpen(false)}
-                    autoFocus
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                  />
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
-                    <Command className="h-3 w-3" />
-                    <span>K</span>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 ml-16"
-                >
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white hidden sm:block">
-                    Welcome back, {(user.name || user.email).split(' ')[0]}! 👋
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Dashboard
                   </h1>
                   <Button
                     variant="ghost"
@@ -136,43 +99,101 @@ const Header = ({ user, taskCount, projectCount }: HeaderProps) => {
                       animate={{ scale: 1 }}
                       className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-semibold"
                     >
-                      {unreadCount}
+                      {unreadCount > 99 ? '99+' : unreadCount}
                     </motion.span>
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 dark:bg-gray-800 dark:border-gray-700">
+              <DropdownMenuContent align="end" className="w-96 dark:bg-gray-800 dark:border-gray-700">
                 <DropdownMenuLabel className="dark:text-white">
                   <div className="flex items-center justify-between">
                     <span>Notifications</span>
-                    <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">
-                      {unreadCount} new
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">
+                        {unreadCount} new
+                      </Badge>
+                      {unreadCount > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={markAllAsRead}
+                          className="h-6 text-xs"
+                        >
+                          Mark all read
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="dark:bg-gray-700" />
-                <div className="max-h-80 overflow-y-auto">
-                  {notifications.map((notification) => (
+                
+                <div className="max-h-96 overflow-y-auto">
+                  {loading && (
+                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                      Loading notifications...
+                    </div>
+                  )}
+                  
+                  {!loading && notifications.length === 0 && (
+                    <div className="p-8 text-center">
+                      <Bell className="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        No notifications yet
+                      </p>
+                    </div>
+                  )}
+                  
+                  {!loading && notifications.map((notification) => (
                     <DropdownMenuItem 
                       key={notification.id} 
-                      className="flex items-start gap-3 p-3 cursor-pointer dark:hover:bg-gray-700"
+                      className="flex items-start gap-3 p-3 cursor-pointer dark:hover:bg-gray-700 relative group"
+                      onClick={() => handleNotificationClick(notification)}
                     >
-                      <div className={`mt-1 w-2 h-2 rounded-full ${notification.unread ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                      <div className="flex-1">
-                        <p className={`text-sm ${notification.unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+                      <div className="flex-shrink-0 text-xl mt-0.5">
+                        {getNotificationIcon(notification.type)}
+                      </div>
+                      <div className={`flex-1 min-w-0 ${!notification.read ? 'pr-8' : ''}`}>
+                        <p className={`text-sm ${notification.read ? 'text-gray-600 dark:text-gray-400' : 'font-semibold text-gray-900 dark:text-white'}`}>
                           {notification.title}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                          {notification.time}
+                        {notification.message && (
+                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 line-clamp-2">
+                            {notification.message}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
+                          {getRelativeTime(notification.createdAt)}
                         </p>
                       </div>
+                      {!notification.read && (
+                        <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-600" />
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNotification(notification.id);
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </DropdownMenuItem>
                   ))}
                 </div>
-                <DropdownMenuSeparator className="dark:bg-gray-700" />
-                <DropdownMenuItem className="text-center justify-center text-blue-600 dark:text-blue-400 font-medium cursor-pointer">
-                  View all notifications
-                </DropdownMenuItem>
+                
+                {notifications.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator className="dark:bg-gray-700" />
+                    <DropdownMenuItem 
+                      className="text-center justify-center text-blue-600 dark:text-blue-400 font-medium cursor-pointer"
+                      onClick={() => router.push('/dashboard/notifications')}
+                    >
+                      View all notifications
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -218,4 +239,4 @@ const Header = ({ user, taskCount, projectCount }: HeaderProps) => {
   );
 }
 
-export default Header;
+export default Header
