@@ -1,8 +1,6 @@
 // app/(dashboard)/dashboard/layout.tsx
 import { requireAuth } from '@/lib/auth-helpers';
-import { getTaskCount } from '@/actions/tasks';
-import { getProjectCount } from '@/actions/projects';
-import { getUserSubscription } from '@/actions/subscription';
+import { getDashboardData } from '@/actions/dashboard';
 import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient';
 
 export default async function DashboardLayout({
@@ -12,12 +10,8 @@ export default async function DashboardLayout({
 }) {
   const user = await requireAuth();
 
-  // Fetch counts and subscription in parallel
-  const [taskCount, projectCount, subscriptionPlan] = await Promise.all([
-    getTaskCount(),
-    getProjectCount(),
-    getUserSubscription(user.id),
-  ]);
+  // Fetch all dashboard data in a single optimized query
+  const { taskCount, projectCount, subscriptionPlan } = await getDashboardData(user.id);
 
   return (
     <DashboardLayoutClient

@@ -91,8 +91,8 @@ export function Header({ user, taskCount = 0, projectCount = 0 }: HeaderProps) {
                   exit={{ opacity: 0, x: -20 }}
                   className="flex items-center gap-4"
                 >
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Dashboard
+                  <h1 className="text-2xl lg:ml-32 font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Welcome back {user?.name?.split(' ')[0]}🙋‍♂️
                   </h1>
                   <Button
                     variant="ghost"

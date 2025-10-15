@@ -44,26 +44,28 @@ model Task {
   priority    Priority @default(MEDIUM)
   status      Status   @default(TODO)
   dueDate     DateTime?
-  
+
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   projectId   String?
   project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  
+
   aiSuggestions Json?  // Stores AI-generated insights
   subtasks      Json?  // Array of subtasks
 
   comments      Comment[]      // Add this line
   activities    Activity[]
   notifications Notification[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@index([userId])
   @@index([projectId])
   @@index([status])
+  @@index([userId, status]) // Composite index for common queries
+  @@index([dueDate])
 }
 
 model Project {
