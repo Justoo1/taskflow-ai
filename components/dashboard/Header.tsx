@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, Search, Settings, User, X } from 'lucide-react';
+import { Bell, Menu, Search, Settings, User, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,16 +19,22 @@ import { SearchDialog } from '@/components/dashboard/SearchDialog';
 import { useNotifications } from '@/hooks/useNotifications';
 import { getRelativeTime, getNotificationIcon, Notification } from '@/types/notification';
 import { useRouter } from 'next/navigation';
+import MobileSidebar from './MobileSidebar';
 
 interface HeaderProps {
   user: {
+    id: string;
     name?: string | null;
     email: string;
+    image?: string | null;
   };
+  taskCount?: number;
+  projectCount?: number;
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user, taskCount = 0, projectCount = 0 }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   
   const {
@@ -54,10 +60,28 @@ export function Header({ user }: HeaderProps) {
 
   return (
     <>
+      {/* Mobile Sidebar */}
+      <MobileSidebar
+        user={user}
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        taskCount={taskCount}
+        projectCount={projectCount}
+      />
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-      
+
       <header className="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between px-6 py-4">
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden mr-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+
           <div className="flex items-center gap-4 flex-1">
             <AnimatePresence mode="wait">
               {!searchOpen && (

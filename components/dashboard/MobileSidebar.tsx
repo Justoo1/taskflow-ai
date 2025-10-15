@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -22,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface MobileSidebarProps {
   user: {
     id: string;
-    name: string | null;
+    name?: string | null;
     email: string;
     image?: string | null;
   };
