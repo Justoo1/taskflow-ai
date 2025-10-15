@@ -86,7 +86,7 @@ export async function generateProjectPlan(
     messages: [
       {
         role: 'system',
-        content: `You are a project planning expert. Break down projects 
+        content: `You are a project planning expert. Break down projects
                   into phases and actionable tasks. Return JSON with this structure:
                   {
                     "phases": [
@@ -103,6 +103,98 @@ export async function generateProjectPlan(
       },
     ],
     response_format: { type: 'json_object' },
+  });
+
+  return JSON.parse(response.choices[0].message.content!);
+}
+
+interface ProjectAnalysis {
+  summary: string;
+  healthScore: number;
+  insights: {
+    completionRate: string;
+    taskDistribution: string;
+    upcomingDeadlines: string;
+    blockers: string[];
+  };
+  recommendations: string[];
+  priorities: {
+    urgent: string[];
+    high: string[];
+    focus: string[];
+  };
+}
+
+export async function analyzeProject(
+  projectName: string,
+  projectDescription: string | null,
+  tasks: Array<{
+    title: string;
+    description: string | null;
+    status: string;
+    priority: string;
+    dueDate: Date | null;
+  }>
+): Promise<ProjectAnalysis> {
+  const tasksSummary = tasks
+    .map(
+      (t) =>
+        `- ${t.title} [${t.status}] (Priority: ${t.priority}, Due: ${
+          t.dueDate ? t.dueDate.toLocaleDateString() : 'No deadline'
+        })`
+    )
+    .join('\n');
+
+  const statusCount = tasks.reduce(
+    (acc, t) => {
+      acc[t.status] = (acc[t.status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const prompt = `Analyze this project and provide comprehensive insights:
+
+Project: ${projectName}
+Description: ${projectDescription || 'No description provided'}
+
+Tasks (${tasks.length} total):
+${tasksSummary}
+
+Status Distribution: ${JSON.stringify(statusCount)}
+
+Provide a detailed analysis in JSON format with:
+1. summary: A brief 2-3 sentence overview of the project's current state
+2. healthScore: A number from 0-100 indicating project health
+3. insights: Object with:
+   - completionRate: Analysis of progress
+   - taskDistribution: Assessment of task priorities and status
+   - upcomingDeadlines: Summary of deadline situation
+   - blockers: Array of potential blockers or issues
+4. recommendations: Array of 3-5 actionable recommendations
+5. priorities: Object with arrays of:
+   - urgent: Tasks that need immediate attention
+   - high: Important high-priority items
+   - focus: Key tasks to focus on this week
+
+Be specific, actionable, and data-driven.`;
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4-turbo-preview',
+    messages: [
+      {
+        role: 'system',
+        content: `You are an expert project management analyst. Analyze projects
+                  and provide actionable insights in JSON format. Be specific and
+                  data-driven in your analysis.`,
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ],
+    response_format: { type: 'json_object' },
+    temperature: 0.7,
   });
 
   return JSON.parse(response.choices[0].message.content!);

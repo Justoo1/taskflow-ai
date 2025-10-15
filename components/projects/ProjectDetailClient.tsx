@@ -135,12 +135,13 @@ const ProjectDetailClient: React.FC<ProjectDetailClientProps> = ({ project: init
         : 0,
   };
 
-  const priorityStats = {
-    urgent: project.tasks.filter((t) => t.priority === 'URGENT').length,
-    high: project.tasks.filter((t) => t.priority === 'HIGH').length,
-    medium: project.tasks.filter((t) => t.priority === 'MEDIUM').length,
-    low: project.tasks.filter((t) => t.priority === 'LOW').length,
-  };
+  // TODO: Add priority stats
+  // const priorityStats = {
+  //   urgent: project.tasks.filter((t) => t.priority === 'URGENT').length,
+  //   high: project.tasks.filter((t) => t.priority === 'HIGH').length,
+  //   medium: project.tasks.filter((t) => t.priority === 'MEDIUM').length,
+  //   low: project.tasks.filter((t) => t.priority === 'LOW').length,
+  // };
 
   const handleDeleteProject = async () => {
     const confirmed = window.confirm(

@@ -1,13 +1,10 @@
-// components/dashboard/SearchDialog.tsx
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +14,6 @@ import {
   Folder,
   Calendar,
   ArrowRight,
-  Clock,
   Hash,
   Loader2,
 } from 'lucide-react';
@@ -105,19 +101,19 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     }
   };
 
-  const allResults = [
+  const allResults = useMemo(() => [
     ...results.tasks.map(task => ({ type: 'task' as const, data: task })),
     ...results.projects.map(project => ({ type: 'project' as const, data: project })),
-  ];
+  ], [results.tasks, results.projects]);
 
-  const handleSelect = (item: typeof allResults[0]) => {
+  const handleSelect = useCallback((item: typeof allResults[0]) => {
     if (item.type === 'task') {
       router.push(`/dashboard/tasks/${item.data.id}`);
     } else {
       router.push(`/dashboard/projects/${item.data.id}`);
     }
     onOpenChange(false);
-  };
+  }, [router, onOpenChange]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -140,7 +136,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, selectedIndex, allResults]);
+  }, [open, selectedIndex, allResults, handleSelect]);
 
   // CMD+K shortcut
   useEffect(() => {

@@ -4,7 +4,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { aiChat, getProductivityInsights } from '@/lib/ai-assistant';
-import { analyzeTask, getDailyRecommendations, generateProjectPlan } from '@/lib/openai';
+import { analyzeTask, getDailyRecommendations, generateProjectPlan, analyzeProject } from '@/lib/openai';
 import { prisma } from '@/lib/prisma';
 
 /**
@@ -252,7 +252,7 @@ export async function getAIUsageStats() {
  */
 export async function getAIInsights() {
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
@@ -298,4 +298,70 @@ export async function getAIInsights() {
   });
 
   return insights;
+}
+
+/**
+ * Analyze a project with AI
+ */
+export async function analyzeProjectWithAI(projectId: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  // Check if user has Pro plan
+  const subscription = await prisma.subscription.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (subscription?.plan === 'FREE') {
+    throw new Error('Project Analysis is a Pro feature. Please upgrade your plan.');
+  }
+
+  // Get the project with its tasks
+  const project = await prisma.project.findFirst({
+    where: {
+      id: projectId,
+      userId: session.user.id,
+    },
+    include: {
+      tasks: {
+        select: {
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          dueDate: true,
+        },
+        orderBy: [
+          { priority: 'desc' },
+          { dueDate: 'asc' },
+        ],
+      },
+    },
+  });
+
+  if (!project) {
+    throw new Error('Project not found');
+  }
+
+  // Analyze the project using AI
+  const analysis = await analyzeProject(
+    project.name,
+    project.description,
+    project.tasks
+  );
+
+  // Track AI usage
+  await prisma.aIUsage.create({
+    data: {
+      userId: session.user.id,
+      feature: 'project_analysis',
+      tokens: 800, // Approximate
+      cost: 0.008, // Approximate
+    },
+  });
+
+  return analysis;
 }

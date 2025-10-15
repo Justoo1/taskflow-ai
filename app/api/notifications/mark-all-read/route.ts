@@ -6,6 +6,7 @@ import { markAllNotificationsAsRead } from '@/actions/notifications';
 /**
  * POST /api/notifications/mark-all-read - Mark all notifications as read
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

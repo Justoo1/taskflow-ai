@@ -54,8 +54,9 @@ const RegisterPage = () => {
       setTimeout(() => {
         router.push('/login?registered=true');
       }, 2000);
-    } catch (err) {
-      setError('An unexpected error occurred');
+    } catch (err: unknown) {
+      const message = (err as Error)?.message;
+      setError(`An unexpected error occurred: ${message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }

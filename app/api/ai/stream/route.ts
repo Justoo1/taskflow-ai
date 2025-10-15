@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       return new Response('Unauthorized', { status: 401 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { message, conversationId } = await req.json();
 
     if (!message || typeof message !== 'string') {

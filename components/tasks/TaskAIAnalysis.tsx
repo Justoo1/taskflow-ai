@@ -1,4 +1,3 @@
-// components/tasks/TaskAIAnalysis.tsx
 'use client';
 
 import { useState } from 'react';
@@ -81,8 +80,9 @@ export default function TaskAIAnalysis({ taskId, taskTitle, taskDescription }: T
                     <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg flex flex-col font-semibold text-gray-900 dark:text-white mb-2">
                   Analyze &ldquo;{taskTitle}&rdquo;
+                  <span className="text-muted text-sm">{taskDescription && `: ${taskDescription}`}</span>
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                   Let AI help you break down this task, estimate time, and provide productivity tips

@@ -121,10 +121,10 @@ export function calculateWeeklyProductivity(tasks: Task[]): ProductivityData[] {
       return updatedAt >= dayStart && updatedAt <= dayEnd;
     }).length;
 
-    const total = tasks.filter(task => {
-      const createdAt = new Date(task.createdAt);
-      return createdAt <= dayEnd;
-    }).length;
+    // const total = tasks.filter(task => {
+    //   const createdAt = new Date(task.createdAt);
+    //   return createdAt <= dayEnd;
+    // }).length;
 
     return {
       day: format(day, 'EEE'),

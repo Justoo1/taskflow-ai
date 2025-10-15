@@ -85,7 +85,7 @@ const StatsCards = ({ stats, plan }: StatsCardsProps) => {
       initial="hidden"
       animate="visible"
     >
-      {cards.map((card, index) => (
+      {cards.map((card) => (
         <motion.div key={card.title} variants={cardVariants}>
           <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-gray-300 dark:hover:border-gray-600 dark:bg-gray-800">
             <CardContent className="p-6">

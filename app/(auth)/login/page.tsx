@@ -43,8 +43,9 @@ export default function LoginPage() {
 
       router.push('/dashboard');
       router.refresh();
-    } catch (error) {
-      setError('Something went wrong. Please try again.');
+    } catch (error: unknown) {
+      const message = (error as Error)?.message;
+      setError(`Something went wrong: ${message || 'Unknown error'}. Please try again.`);
     } finally {
       setIsLoading(false);
     }

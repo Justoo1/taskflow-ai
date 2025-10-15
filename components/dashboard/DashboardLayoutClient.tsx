@@ -89,7 +89,7 @@ export default function DashboardLayoutClient({
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="lg:pl-64"
       >
-        <Header user={user} taskCount={taskCount} projectCount={projectCount} />
+        <Header user={user}  />
 
         <main className="py-6 px-4 sm:px-6 lg:px-8">
           {children}

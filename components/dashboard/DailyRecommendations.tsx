@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, RefreshCw, TrendingUp, Crown } from 'lucide-react';
@@ -69,7 +69,7 @@ export default function DailyRecommendations({ plan }: DailyRecommendationsProps
 
   const isPro = plan !== 'FREE';
 
-  const loadRecommendations = async (forceRefresh: boolean = false) => {
+  const loadRecommendations = useCallback(async (forceRefresh: boolean = false) => {
     if (!isPro) return;
 
     // Check cache first if not forcing refresh
@@ -101,13 +101,13 @@ export default function DailyRecommendations({ plan }: DailyRecommendationsProps
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isPro]);
 
   useEffect(() => {
     if (isPro) {
       loadRecommendations();
     }
-  }, [isPro]);
+  }, [isPro, loadRecommendations]);
 
   if (!isPro) {
     return (

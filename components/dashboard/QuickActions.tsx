@@ -1,7 +1,6 @@
 // components/dashboard/QuickActions.tsx
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Plus, Sparkles, FolderPlus, Calendar, Users, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
